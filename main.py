@@ -1,31 +1,27 @@
 import asyncio
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command
-from dotenv import load_dotenv
-from os import getenv
+from aiogram.types import BotCommand
 from logging import basicConfig
-
-
-load_dotenv()
-bot = Bot(token=getenv('BOT_TOKEN'))
-dp = Dispatcher()
-
-@dp.message(Command('start'))
-async def start(message: types.Message):
-    await message.answer(f'Привет, {message.from_user.first_name}!')
-
-@dp.message(Command('myinfo'))
-async def info(message: types.Message):
-    await message.answer(f'Ваш ID: {message.from_user.id}\n'
-                         f'Ваше имя: {message.from_user.first_name}\n'
-                         f'Ваше имя пользователя: {message.from_user.username}\n')
-
-@dp.message(Command('image'))
-async def image(message: types.Message):
-    file = types.FSInputFile('image/galaxy.jpg')
-    await message.answer_photo(file)
+from bot import dp, bot
+from handlers.start import start_router
+from handlers.myinfo import info_router
+from handlers.image import img_router
+from handlers.faculties import faculties_router
 
 async def main():
+    await bot.set_my_commands(
+        [
+           BotCommand(command='start', description='Запустить бота'),
+           BotCommand(command='image', description='Отправить картинку'),
+           BotCommand(command='myinfo', description='Показать данные'),
+           BotCommand(command='faculties', description='Открыть факультеты')
+        ]
+    )
+
+    dp.include_router(img_router)
+    dp.include_router(info_router)
+    dp.include_router(start_router)
+    dp.include_router(faculties_router)
+
     await dp.start_polling(bot)
 
 
