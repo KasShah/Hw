@@ -1,5 +1,6 @@
 import asyncio
 from aiogram.types import BotCommand
+from aiogram import Dispatcher
 from logging import basicConfig
 from bot import dp, bot
 from handlers import (
@@ -9,6 +10,15 @@ img_router,
 faculties_router,
 questions_router
 )
+from db.queries import init_db, create_table, populate_tables
+
+
+async def on_startup(dispatcher):
+    print('Бот запущен')
+    init_db()
+    create_table()
+    populate_tables()
+
 async def main():
     await bot.set_my_commands(
         [
@@ -16,9 +26,12 @@ async def main():
            BotCommand(command='image', description='Отправить картинку'),
            BotCommand(command='myinfo', description='Показать данные'),
            BotCommand(command='faculties', description='Открыть факультеты'),
-            BotCommand(command='questions', description='Начать опрос')
+           BotCommand(command='questions', description='Начать опрос')
         ]
     )
+
+    dp.startup.register(on_startup)
+
 
     dp.include_router(img_router)
     dp.include_router(info_router)

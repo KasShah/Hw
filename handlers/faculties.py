@@ -1,11 +1,12 @@
 from aiogram import types, Router, F
 from aiogram.filters import Command
+from db.queries import get_all
 
 
 faculties_router = Router()
 
 @faculties_router.message(Command('faculties'))
-async def shop(message: types.Message):
+async def faculties(message: types.Message):
     kb = types.ReplyKeyboardMarkup(
         keyboard=[
             [types.KeyboardButton(text='Лингвистики')],
@@ -17,18 +18,21 @@ async def shop(message: types.Message):
     )
     await message.answer("Выберите факультет ниже:", reply_markup=kb)
 
-@faculties_router.message(F.text.lower() == 'Лингвистики')
-async def show_books(message: types.Message):
+@faculties_router.message(F.text.lower() == 'лингвистики')
+async def show_linguistics(message: types.Message):
     kb = types.ReplyKeyboardRemove()
+    linguistics = get_all()
     await message.answer('Кафедры факультета Лигвистики', reply_markup=kb)
+    for student in linguistics:
+        await message.answer(student[1])
 
-@faculties_router.message(F.text.lower() == 'Филологии')
-async def show_figurines(message: types.Message):
+@faculties_router.message(F.text.lower() == 'филологии')
+async def show_philology(message: types.Message):
     kb = types.ReplyKeyboardRemove()
     await message.answer('Кафедры факультета Филологии', reply_markup=kb)
 
-@faculties_router.message(F.text.lower() == 'Программирования')
-async def show_accessories(message: types.Message):
+@faculties_router.message(F.text.lower() == 'программирования')
+async def show_programming(message: types.Message):
     kb = types.ReplyKeyboardRemove()
     await message.answer('Кафедры факультета Программирования', reply_markup=kb)
 
