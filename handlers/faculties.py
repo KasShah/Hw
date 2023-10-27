@@ -1,6 +1,6 @@
 from aiogram import types, Router, F
 from aiogram.filters import Command
-from db.queries import get_all
+from db.queries import get_all, get_by_category
 
 
 faculties_router = Router()
@@ -21,20 +21,26 @@ async def faculties(message: types.Message):
 @faculties_router.message(F.text.lower() == 'лингвистики')
 async def show_linguistics(message: types.Message):
     kb = types.ReplyKeyboardRemove()
-    linguistics = get_all()
-    await message.answer('Кафедры факультета Лигвистики', reply_markup=kb)
+    linguistics = get_by_category(1)
+    await message.answer('Студенты факультета Лигвистики', reply_markup=kb)
     for student in linguistics:
         await message.answer(student[1])
 
 @faculties_router.message(F.text.lower() == 'филологии')
 async def show_philology(message: types.Message):
     kb = types.ReplyKeyboardRemove()
-    await message.answer('Кафедры факультета Филологии', reply_markup=kb)
+    philology = get_by_category(2)
+    await message.answer('Студенты факультета Филологии', reply_markup=kb)
+    for student in philology:
+        await message.answer(student[1])
 
 @faculties_router.message(F.text.lower() == 'программирования')
 async def show_programming(message: types.Message):
     kb = types.ReplyKeyboardRemove()
-    await message.answer('Кафедры факультета Программирования', reply_markup=kb)
+    programming = get_by_category(3)
+    await message.answer('Студенты факультета Программирования', reply_markup=kb)
+    for student in programming:
+        await message.answer(student[1])
 
 @faculties_router.message(F.text.lower() == 'в начало')
 async def inline(message: types.Message):
